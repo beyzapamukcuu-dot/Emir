@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sultanın Sosyal Medyası</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/billabong');
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body, html { height: 100%; width: 100%; overflow: hidden; position: fixed; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #000; color: white; }
+        #phone-wrapper { width: 100%; height: 100%; position: relative; }
+
+        /* AÇILIŞ VİDEOSU (INTRO) */
+        #intro-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; }
+        #intro-layer video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ANA EKRAN */
+        #home-screen { width: 100%; height: 100%; background: url('arkaplan.jpg') center/cover; padding: 60px 25px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; z-index: 1; position: absolute; }
+        .app-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        .app-icon { width: 66px; height: 66px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+        .icon-wa { background: linear-gradient(#25D366, #128C7E); }
+        .icon-ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+        .app-label { color: white; font-size: 13px; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,1); }
+
+        .full-app { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; transform: translateY(100%); transition: transform 0.3s ease-out; display: flex; flex-direction: column; visibility: hidden; }
+        .full-app.active { transform: translateY(0); visibility: visible; }
+
+        /* WHATSAPP */
+        #wa-app { background-color: #e5ddd5; }
+        .wa-header { background: #075E54; color: white; height: 65px; display: flex; align-items: center; padding: 0 12px; gap: 10px; flex-shrink: 0; }
+        .wa-header img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+        .wa-chat { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 6px; background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: 600px !important; background-repeat: repeat; }
+        .wa-date-label { align-self: center; background: #e1f3fb; color: #54656f; padding: 6px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 600; margin: 15px 0; display: block; width: fit-content; }
+        .wa-msg { max-width: 82%; padding: 8px 12px 10px; font-size: 15.5px; position: relative; box-shadow: 0 1.2px 1px rgba(0,0,0,0.18); margin-bottom: 4px; color: #000; background: white; border-radius: 0 10px 10px 10px; align-self: flex-start; }
+        .wa-sent { align-self: flex-end; background: #e7ffdb; border-radius: 10px 0 10px 10px; }
+        .wa-time { font-size: 10px; color: #667781; float: right; margin: 5px 0 0 10px; display: flex; align-items: center; gap: 3px; }
+        .wa-status-blue { color: #34b7f1 !important; font-weight: bold; }
+        .blue-tick { color: #34b7f1 !important; }
+        .wa-input-area { background: #f0f2f5; padding: 8px 10px; display: flex; align-items: center; gap: 8px; }
+        .wa-input-wrap { flex: 1; background: white; border-radius: 25px; display: flex; align-items: center; padding: 0 15px; }
+        .wa-input-box { flex: 1; border: none; outline: none; padding: 12px 0; font-size: 16px; background: transparent; color: #000; }
+        .wa-send-btn { background: #00a884; color: white; width: 48px; height: 48px; border-radius: 50%; border: none; font-size: 20px; }
+
+        /* INSTAGRAM */
+        #ig-app { background: #000; }
+        .ig-nav { height: 55px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 0.1px solid #262626; background: #000; flex-shrink: 0; }
+        .ig-main-content { flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+        #ig-feed-scroll { flex: 1; overflow-y: auto; }
+        .ig-stories { display: flex; gap: 15px; padding: 12px; overflow-x: auto; border-bottom: 0.1px solid #262626; scrollbar-width: none; }
+        .ig-story-item { display: flex; flex-direction: column; align-items: center; min-width: 75px; }
+        .ring-colorful { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); display: flex; align-items: center; justify-content: center; }
+        .ring-colorful img { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #000; object-fit: cover; }
+        
+        .ig-post { border-bottom: 0.1px solid #262626; padding-bottom: 15px; }
+        .p-header { display: flex; align-items: center; padding: 10px; gap: 10px; }
+        .p-header img { width: 32px; height: 32px; border-radius: 50%; }
+        .p-img img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+        .p-actions { padding: 12px; display: flex; align-items: center; gap: 18px; font-size: 22px; color: white; }
+        .p-caption { padding: 0 12px; font-size: 14px; line-height: 1.4; }
+        .active-heart { color: #ff3040 !important; }
+
+        /* REELS */
+        #ig-reels-scroll { display: none; height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; background: #000; scrollbar-width: none; }
+        #ig-reels-scroll::-webkit-scrollbar { display: none; }
+        .reels-v-block { height: 100%; width: 100%; scroll-snap-align: start; scroll-snap-stop: always; position: relative; display: flex; align-items: center; justify-content: center; }
+        .reels-v-block video { width: 100%; height: 100%; object-fit: cover; }
+        
+        .reels-ui { position: absolute; right: 15px; bottom: 85px; display: flex; flex-direction: column; gap: 22px; align-items: center; z-index: 10; color: white; }
+        .reels-ui-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .reels-ui-item i { font-size: 28px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); cursor: pointer; }
+        .reels-ui-item span { font-size: 12px; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+        .reels-user { position: absolute; left: 15px; bottom: 30px; display: flex; flex-direction: column; gap: 6px; z-index: 10; color: white; }
+        .reels-user-row { display: flex; align-items: center; gap: 10px; }
+        .reels-user img { width: 35px; height: 35px; border-radius: 50%; border: 1px solid white; }
+        .reels-cap { font-size: 14px; margin-left: 5px; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+        /* PROFİL */
+        #ig-profile-scroll { display: none; flex: 1; overflow-y: auto; background: #000; }
+        .prof-header-top { padding: 15px; display: flex; align-items: center; justify-content: space-between; font-size: 20px; font-weight: bold; }
+        .prof-info-row { padding: 10px 15px; display: flex; align-items: center; gap: 25px; }
+        .prof-avatar-wrap { position: relative; width: 85px; height: 85px; }
+        .prof-avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; border: 1px solid #262626; }
+        .stats-wrap { flex: 1; display: flex; justify-content: space-around; text-align: center; }
+        .stat-item b { display: block; font-size: 17px; }
+        .stat-item span { font-size: 14px; color: #a8a8a8; }
+        .prof-bio { padding: 0 15px; font-size: 14px; line-height: 1.5; }
+        .prof-bio b { display: block; font-size: 15px; }
+        .prof-buttons { padding: 15px; display: flex; gap: 8px; }
+        .prof-btn { flex: 1; background: #1a1a1a; padding: 8px; text-align: center; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .grid-3x3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+        .grid-item { position: relative; width: 100%; aspect-ratio: 1/1; cursor: pointer; }
+        .grid-item img { width: 100%; height: 100%; object-fit: cover; }
+        .pin-icon { position: absolute; top: 8px; right: 8px; font-size: 12px; }
+
+        .ig-footer { height: 55px; border-top: 0.1px solid #262626; display: flex; align-items: center; justify-content: space-around; font-size: 24px; background: #000; flex-shrink: 0; z-index: 110; }
+        .ig-footer img { width: 26px; height: 26px; border-radius: 50%; border: 1px solid white; cursor: pointer; }
+
+        /* HİKAYE (STORY) OVERLAY TASARIMI (GELİŞMİŞ) */
+        #story-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
+        #story-bars-wrap { position: absolute; top: 8px; left: 0; width: 100%; padding: 0 5px; display: flex; gap: 4px; z-index: 3002; }
+        .story-seg-bar { flex: 1; height: 2px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+        .story-seg-fill { height: 100%; background: #fff; width: 0%; }
+        
+        .story-header { padding: 20px 10px; display: flex; align-items: center; gap: 10px; z-index: 3001; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); margin-top: 10px; }
+        #story-user-img { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #fff; }
+        #story-user-name { flex: 1; font-size: 14px; color: white; text-shadow: 0 1px 2px #000; font-weight: 600; }
+        
+        /* Dokunma Alanları */
+        .story-tap-left { position: absolute; top: 0; left: 0; width: 30%; height: 100%; z-index: 3000; }
+        .story-tap-right { position: absolute; top: 0; right: 0; width: 70%; height: 100%; z-index: 3000; }
+
+        #profile-post-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2500; display: none; flex-direction: column; overflow-y: auto; }
+
+        /* DM PAGE STYLES */
+        #ig-dm-page { display: none; flex-direction: column; background: #000; height: 100%; width: 100%; position: absolute; top: 0; left: 0; z-index: 200; }
+        .dm-header { height: 55px; display: flex; align-items: center; padding: 0 15px; gap: 20px; border-bottom: 0.1px solid #262626; }
+        .dm-header b { flex: 1; font-size: 18px; }
+        .dm-search { background: #121212; margin: 15px; padding: 8px 15px; border-radius: 10px; display: flex; align-items: center; gap: 10px; color: #8e8e8e; }
+        .dm-search input { background: transparent; border: none; outline: none; color: white; flex: 1; }
+        .dm-list { flex: 1; overflow-y: auto; }
+        .dm-item { display: flex; align-items: center; padding: 12px 15px; gap: 12px; cursor: pointer; transition: background 0.2s; }
+        .dm-item:active { background: #1a1a1a; }
+        .dm-item img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+        .dm-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .dm-user { font-weight: 500; font-size: 15px; }
+        .dm-msg-preview { font-size: 13px; color: #a8a8a8; }
+        .dm-active-dot { width: 12px; height: 12px; background: #00d95f; border: 2px solid black; border-radius: 50%; position: absolute; bottom: 0; right: 0; }
+        .dm-unread-dot { width: 8px; height: 8px; background: #0095f6; border-radius: 50%; }
+
+        /* DM SOHBET EKRANI */
+        #dm-chat-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 300; display: none; flex-direction: column; }
+        .chat-header { height: 60px; display: flex; align-items: center; padding: 0 15px; gap: 15px; border-bottom: 0.1px solid #262626; }
+        .chat-header img { width: 35px; height: 35px; border-radius: 50%; }
+        .chat-content { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-bubble { max-width: 75%; padding: 10px 15px; border-radius: 20px; font-size: 14px; line-height: 1.4; }
+        .chat-received { align-self: flex-start; background: #262626; color: white; }
+        .chat-sent { align-self: flex-end; background: #3797f0; color: white; }
+        .dm-chat-input-area { background: #000; padding: 10px 15px; display: flex; align-items: center; gap: 10px; border-top: 0.1px solid #262626; }
+        .dm-chat-input-wrap { flex: 1; background: #262626; border-radius: 20px; display: flex; align-items: center; padding: 0 15px; }
+        .dm-chat-input-box { flex: 1; border: none; outline: none; padding: 10px 0; font-size: 14px; background: transparent; color: white; }
+        .dm-chat-send-btn { background: transparent; color: #0095f6; border: none; font-weight: 600; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+
+<div id="intro-layer">
+    <video id="intro-video" src="intro.mp4" autoplay playsinline muted onended="closeIntro()"></video>
+</div>
+
+<div id="phone-wrapper">
+    <div id="home-screen">
+        <div class="app-item" onclick="toggleApp('wa-app', true)">
+            <div class="app-icon icon-wa"><i class="fa-brands fa-whatsapp"></i></div>
+            <span class="app-label">WhatsApp</span>
+        </div>
+        <div class="app-item" onclick="toggleApp('ig-app', true)">
+            <div class="app-icon icon-ig"><i class="fa-brands fa-instagram"></i></div>
+            <span class="app-label">Instagram</span>
+        </div>
+    </div>
+
+    <div id="wa-app" class="full-app">
+        <div class="wa-header">
+            <i class="fa-solid fa-arrow-left" onclick="toggleApp('wa-app', false)"></i>
+            <img src="fatih_profil.jpg">
+            <div style="flex:1"><b>Fatih Sultan Mehmet</b><small id="wa-status" style="display:block; color:#cfdfdd; font-size:12px;">çevrimiçi</small></div>
+            <div style="display:flex; gap:20px; font-size:18px; color:white; padding-right:5px;"><i class="fa-solid fa-video"></i><i class="fa-solid fa-phone"></i></div>
+        </div>
+        <div class="wa-chat" id="wa-chatArea">
+            <div class="wa-date-label">BUGÜN</div>
+            <div class="wa-msg">Sualin ne ise beyan eyle yiğidim. <div class="wa-time">14:53</div></div>
+        </div>
+        <div class="wa-input-area">
+            <div class="wa-input-wrap"><input type="text" class="wa-input-box" id="wa-input" placeholder="Mesaj yazın" oninput="toggleWaBtn()"></div>
+            <button class="wa-send-btn" id="wa-send-btn-el" onclick="waSend()"><i class="fa-solid fa-microphone" id="wa-icon"></i></button>
+        </div>
+    </div>
+
+    <div id="ig-app" class="full-app">
+        <div id="ig-feed-nav" class="ig-nav">
+          <i class="fa-solid fa-chevron-left" onclick="toggleApp('ig-app', false)" style="font-size: 20px; margin-right: 15px;"></i>
+            <div style="font-size: 20px; font-weight: 700;">Senin için <i class="fa-solid fa-chevron-down" style="font-size:12px;"></i></div>
+            <div style="display:flex; gap:22px;">
+                <i class="fa-regular fa-heart"></i>
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+        </div>
+
+        <div class="ig-main-content">
+            <div id="ig-feed-scroll">
+                <div class="ig-stories" id="story-bar">
+                    <div class="ig-story-item" onclick="openStory('fatih')"><div class="ring-colorful"><img src="fatih_profil.jpg"></div><span>Fatih</span></div>
+                    <div class="ig-story-item" onclick="openStory('ulubatli')"><div class="ring-colorful"><img src="ulubatli_profil.jpg"></div><span>Ulubatlı</span></div>
+                    <div class="ig-story-item" onclick="openStory('aksemseddin')"><div class="ring-colorful"><img src="aksemseddin_profil.jpg"></div><span>Akşem.</span></div>
+                    <div class="ig-story-item" onclick="openStory('gurani')"><div class="ring-colorful"><img src="gurani_profil.jpg"></div><span>Gürani</span></div>
+                    <div class="ig-story-item" onclick="openStory('zaganos')"><div class="ring-colorful"><img src="zaganos_profil.jpg"></div><span>Zağanos</span></div>
+                </div>
+                
+                <div id="post-container">
+                    <div class="ig-post">
+                        <div class="p-header"><img src="fatih_profil.jpg"><b>fatih_sultan_mehmet</b></div>
+                        <div class="p-img"><img src="post1.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>fatih_sultan_mehmet</b> Fetih öncesi nizamı kontrol ediyoruz. Dualarınız bizimle olsun! #İstanbulFethi #NizamıAlem #Fatih</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="ulubatli_profil.jpg"><b>ulubatli_hasan</b></div>
+                        <div class="p-img"><img src="post2.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>ulubatli_hasan</b> Bu sancak yere düşmez! Surların tepesinde, fethin müjdecisiyiz. 🇹🇷 #Vatan #Bayrak #Fetih2026</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="aksemseddin_profil.jpg"><b>aksemseddin</b></div>
+                        <div class="p-img"><img src="post3.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>aksemseddin</b> Fetihten hemen önce Sultanımızla bir hatıra... Dualar kabul, zafer yakındır. #İnanç #ManeviFetih #Akşemseddin</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="gurani_profil.jpg"><b>molla_gurani</b></div>
+                        <div class="p-img"><img src="post4.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>molla_gurani</b> Hakkın adaleti için surlara yöneldik. Her işaret bir zafere gebe! #İlim #Cihat #Başarı</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="zaganos_profil.jpg"><b>zaganos_pasa</b></div>
+                        <div class="p-img"><img src="post5.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>zaganos_pasa</b> Son istişareler tamamlandı. Gemiler karadan yürümeye hazır! #Strateji #GemilerKaradan #OsmanlıDonanması</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="fatih_profil.jpg"><b>fatih_sultan_mehmet</b></div>
+                        <div class="p-img"><img src="post6.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>fatih_sultan_mehmet</b> Şükürler olsun, destan yazdık! İstanbul artık İslam'ın nurlu şehridir. 🎉 #Zafer #İstanbul #CihanSultanı</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ig-profile-scroll">
+                <div class="prof-header-top"><i class="fa-solid fa-plus-square"></i><span>fatih_sultan_mehmet <i class="fa-solid fa-chevron-down" style="font-size:12px;"></i></span><i class="fa-solid fa-bars"></i></div>
+                <div class="prof-info-row">
+                    <div class="prof-avatar-wrap"><img src="fatih_profil.jpg"></div>
+                    <div class="stats-wrap">
+                        <div class="stat-item"><b>27</b><span>gönderi</span></div>
+                        <div class="stat-item"><b>1.4M</b><span>takipçi</span></div>
+                        <div class="stat-item"><b>1453</b><span>takip</span></div>
+                    </div>
+                </div>
+                <div class="prof-bio"><b>Sultan Mehmed Han</b><span>Fatihim, fermanım cihana yeter. İstanbul artık bizimdir! ;)</span></div>
+                <div class="prof-buttons"><div class="prof-btn">Profili düzenle</div><div class="prof-btn">Profili paylaş</div></div>
+                <div class="grid-3x3" id="profile-grid">
+                    <div class="grid-item" onclick="openProfilePost(0)"><img src="post1.jpg"><i class="fa-solid fa-thumbtack pin-icon"></i></div>
+                    <div class="grid-item" onclick="openProfilePost(1)"><img src="post6.jpg"><i class="fa-solid fa-thumbtack pin-icon"></i></div>
+                    <div class="grid-item" onclick="openProfilePost(2)"><img src="fatih_ekstra1.jpg"></div>
+                    <div class="grid-item" onclick="openProfilePost(3)"><img src="fatih_ekstra2.jpg"></div>
+                    <div class="grid-item" onclick="openProfilePost(4)"><img src="fatih_ekstra3.jpg"></div>
+                    <div class="grid-item" onclick="openProfilePost(5)"><img src="fatih_ekstra4.jpg"></div>
+                </div>
+            </div>
+
+            <div id="ig-reels-scroll" onscroll="handleReelsScroll()">
+                <div class="reels-v-block">
+                    <video loop playsinline src="video1.mp4" onclick="this.paused?this.play():this.pause()"></video>
+                    <div class="reels-user">
+                        <div class="reels-user-row"><img src="fatih_profil.jpg"><b>fatih_sultan_mehmet</b></div>
+                        <div class="reels-cap">Dualarınızı eksik etmeyin 🙏📿 #reels #fetih </div>
+                    </div>
+                    <div class="reels-ui">
+                        <div class="reels-ui-item"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><span>20,1 B</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-comment"></i><span>432</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-paper-plane"></i><span>1.701</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-bookmark"></i><span>4.908</span></div>
+                    </div>
+                </div>
+                <div class="reels-v-block">
+                    <video loop playsinline src="video2.mp4" onclick="this.paused?this.play():this.pause()"></video>
+                    <div class="reels-user">
+                        <div class="reels-user-row"><img src="ulubatli_profil.jpg"><b>ulubatli_hasan</b></div>
+                        <div class="reels-cap">Biz 😎🇹🇷 #kahraman #bayrak #reelsviral</div>
+                    </div>
+                    <div class="reels-ui">
+                        <div class="reels-ui-item"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><span>900K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-comment"></i><span>10K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-paper-plane"></i><span>5K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-bookmark"></i><span>2K</span></div>
+                    </div>
+                </div>
+                <div class="reels-v-block">
+                    <video loop playsinline src="video3.mp4" onclick="this.paused?this.play():this.pause()"></video>
+                    <div class="reels-user">
+                        <div class="reels-user-row"><img src="aksemseddin_profil.jpg"><b>aksemseddin</b></div>
+                        <div class="reels-cap">Hayırlı cumalar Bizans 😎</div>
+                    </div>
+                    <div class="reels-ui">
+                        <div class="reels-ui-item"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><span>850K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-comment"></i><span>5K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-paper-plane"></i><span>1K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-bookmark"></i></div>
+                    </div>
+                </div>
+                <div class="reels-v-block">
+                    <video loop playsinline src="video4.mp4" onclick="this.paused?this.play():this.pause()"></video>
+                    <div class="reels-user">
+                        <div class="reels-user-row"><img src="gurani_profil.jpg"><b>molla_gurani</b></div>
+                        <div class="reels-cap">Fetih yakındır! 📚⚔️</div>
+                    </div>
+                    <div class="reels-ui">
+                        <div class="reels-ui-item"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><span>700K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-comment"></i><span>3K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-bookmark"></i></div>
+                    </div>
+                </div>
+                <div class="reels-v-block">
+                    <video loop playsinline src="video5.mp4" onclick="this.paused?this.play():this.pause()"></video>
+                    <div class="reels-user">
+                        <div class="reels-user-row"><img src="zaganos_profil.jpg"><b>zaganos_pasa</b></div>
+                        <div class="reels-cap">İlim Çin'de bile olsa gidip alınız...️</div>
+                    </div>
+                    <div class="reels-ui">
+                        <div class="reels-ui-item"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><span>650K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-comment"></i><span>2K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-bookmark"></i></div>
+                    </div>
+                </div>
+                <div class="reels-v-block">
+                    <video loop playsinline src="video6.mp4" onclick="this.paused?this.play():this.pause()"></video>
+                    <div class="reels-user">
+                        <div class="reels-user-row"><img src="fatih_profil.jpg"><b>fatih_sultan_mehmet</b></div>
+                        <div class="reels-cap">Karadan yürüttüğümüz gemiler! ⚓🚢 #reels #fetih</div>
+                    </div>
+                    <div class="reels-ui">
+                        <div class="reels-ui-item"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><span>1.2M</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-comment"></i><span>12K</span></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="reels-ui-item"><i class="fa-regular fa-bookmark"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ig-dm-page">
+                <div class="dm-header">
+                    <i class="fa-solid fa-arrow-left" onclick="toggleDM(false)"></i>
+                    <b>fatih_sultan_mehmet</b>
+                    <div style="display:flex; gap:20px; font-size:18px;"><i class="fa-solid fa-video"></i><i class="fa-solid fa-pen-to-square"></i></div>
+                </div>
+                <div class="dm-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search or ask Meta AI">
+                </div>
+                <div class="dm-list">
+                    <div class="dm-item" onclick="openDMChat('ulubatli_hasan', 'ulubatli_profil.jpg', 'hasan')">
+                        <div style="position:relative"><img src="ulubatli_profil.jpg"><div class="dm-active-dot"></div></div>
+                        <div class="dm-info"><span class="dm-user">ulubatli_hasan</span><span class="dm-msg-preview">Surlara bayrağı diktik Sultanım!</span></div>
+                        <i class="fa-solid fa-camera" style="color:#a8a8a8; font-size:20px;"></i>
+                    </div>
+                    <div class="dm-item" onclick="openDMChat('aksemseddin', 'aksemseddin_profil.jpg', 'aksemseddin')">
+                        <img src="aksemseddin_profil.jpg">
+                        <div class="dm-info"><span class="dm-user">aksemseddin</span><span class="dm-msg-preview">Dualarımız kabul oldu, fetih mübarek olsun.</span></div>
+                        <i class="fa-solid fa-camera" style="color:#a8a8a8; font-size:20px;"></i>
+                    </div>
+                    <div class="dm-item" onclick="openDMChat('molla_gurani', 'gurani_profil.jpg', 'gurani')">
+                        <img src="gurani_profil.jpg">
+                        <div class="dm-info"><span class="dm-user">molla_gurani</span><span class="dm-msg-preview">Ders vaktidir Hünkarım, ilim ihmale gelmez.</span></div>
+                        <i class="fa-solid fa-camera" style="color:#a8a8a8; font-size:20px;"></i>
+                    </div>
+                    <div class="dm-item" onclick="openDMChat('zaganos_pasa', 'zaganos_profil.jpg', 'zaganos')">
+                        <div style="position:relative"><img src="zaganos_profil.jpg"><div class="dm-active-dot"></div></div>
+                        <div class="dm-info">
+                            <span class="dm-user">zaganos_pasa <i class="fa-solid fa-circle-check" style="color:#0095f6; font-size:12px;"></i></span>
+                            <span class="dm-msg-preview" style="color:white; font-weight:bold;">Donanma Haliç'e indi...</span>
+                        </div>
+                        <div class="dm-unread-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dm-chat-view">
+                <div class="chat-header">
+                    <i class="fa-solid fa-arrow-left" onclick="document.getElementById('dm-chat-view').style.display='none'"></i>
+                    <img id="chat-user-img" src="">
+                    <div style="flex:1">
+                        <b id="chat-user-name"></b>
+                        <div style="font-size:12px; color:#a8a8a8;" id="chat-sub-status">Active now</div>
+                    </div>
+                    <div style="display:flex; gap:15px; font-size:18px;"><i class="fa-solid fa-phone"></i><i class="fa-solid fa-video"></i></div>
+                </div>
+                <div class="chat-content" id="chat-messages"></div>
+                <div class="dm-chat-input-area">
+                    <div class="dm-chat-input-wrap">
+                        <input type="text" class="dm-chat-input-box" id="dm-chat-input" placeholder="Message..." oninput="toggleDmChatBtn()">
+                    </div>
+                    <button class="dm-chat-send-btn" id="dm-chat-send-btn-el" onclick="dmChatSend()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ig-footer">
+            <i class="fa-solid fa-house" onclick="switchIG('feed')"></i>
+            <i class="fa-brands fa-facebook-messenger" onclick="toggleDM(true)"></i>
+            <i class="fa-solid fa-plus-square"></i>
+            <i class="fa-solid fa-clapperboard" onclick="switchIG('reels')"></i>
+            <img src="fatih_profil.jpg" onclick="switchIG('profile')">
+        </div>
+    </div>
+</div>
+
+<div id="profile-post-view">
+    <div class="ig-nav">
+        <i class="fa-solid fa-arrow-left" onclick="document.getElementById('profile-post-view').style.display='none'"></i>
+        <b>Gönderiler</b>
+        <div></div>
+    </div>
+    <div id="profile-post-content"></div>
+</div>
+
+<div id="story-overlay">
+    <div id="story-bars-wrap"></div> 
+    <div class="story-header">
+        <img id="story-user-img" src="">
+        <b id="story-user-name"></b>
+        <i class="fa-solid fa-xmark" style="margin-left:auto; cursor:pointer;" onclick="closeStory()"></i>
+    </div>
+    
+    <div class="story-tap-left" onclick="prevStory()"></div>
+    <div class="story-tap-right" onclick="nextStory()"></div>
+    
+    <img id="story-img-full" src="" style="width: 100%; flex: 1; object-fit: cover;">
+</div>
+
+<script>
+const GROQ_KEY = "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";
+
+// HİKAYE VERİTABANI
+const storiesDB = {
+    'fatih': { user: 'fatih_sultan_mehmet', avatar: 'fatih_profil.jpg', items: ['post1.jpg', 'post6.jpg', 'fatih_ekstra1.jpg'] },
+    'ulubatli': { user: 'ulubatli_hasan', avatar: 'ulubatli_profil.jpg', items: ['post2.jpg'] }, // Ulubatlı TEK hikaye
+    'aksemseddin': { user: 'aksemseddin', avatar: 'aksemseddin_profil.jpg', items: ['post3.jpg'] },
+    'gurani': { user: 'molla_gurani', avatar: 'gurani_profil.jpg', items: ['post4.jpg'] },
+    'zaganos': { user: 'zaganos_pasa', avatar: 'zaganos_profil.jpg', items: ['post5.jpg'] }
+};
+const storyOrder = Object.keys(storiesDB); // Kullanıcı sırası
+
+let currentStoryUser = null;
+let currentStoryIndex = 0;
+let storyInterval;
+let storyProgress = 0;
+
+const aiMemory = {
+    fatih: { history: [{role:"system", content:"Sen Fatih Sultan Mehmet'sin. Vakur, bilge ve otoriter bir dil kullan. 'Yiğidim' diye hitap et."}] },
+    hasan: { history: [{role:"system", content:"Sen Ulubatlı Hasan'sın. Cesur, sadık bir askersin. Sultanına rapor veriyorsun. 'Sultanım' diye hitap et."}] },
+    aksemseddin: { history: [{role:"system", content:"Sen Akşemseddin'sin. Fatih'in hocasısın. Bilge, manevi ve sakin bir dil kullan."}] },
+    gurani: { history: [{role:"system", content:"Sen Molla Gürani'sin. Sert, disiplinli bir müderrisin. İlim ve adaletten bahset."}] },
+    zaganos: { history: [{role:"system", content:"Sen Zağanos Paşa'sın. Stratejik, sert ve askeri bir dil kullan. Planlardan bahset."}] }
+};
+
+let currentDmChar = "";
+
+const sultanDataArr = [
+    {img: "post1.jpg", cap: "Fetih öncesi nizamı kontrol ediyoruz. Dualarınız bizimle olsun! #İstanbulFethi"},
+    {img: "post6.jpg", cap: "Şükürler olsun, destan yazdık! İstanbul artık İslam'ın nurlu şehridir. 🎉"},
+    {img: "fatih_ekstra1.jpg", cap: "Fetih sonrası ziyafet 😋 #Saray #Osmanlı"},
+    {img: "fatih_ekstra2.jpg", cap: "Cihan hakimiyeti yolunda... #Strateji"},
+    {img: "fatih_ekstra3.jpg", cap: "Kadim dostumla bir araya geldik. 🥰"},
+    {img: "fatih_ekstra4.jpg", cap: "Fetih öncesi kan şekerimiz düştü 😋"}
+];
+
+function closeIntro() {
+    const intro = document.getElementById('intro-layer');
+    const v = document.getElementById('intro-video');
+    if(v) v.pause();
+    if(intro) {
+        intro.style.transition = "opacity 0.5s ease";
+        intro.style.opacity = "0";
+        setTimeout(() => intro.style.display = "none", 500);
+    }
+}
+
+function toggleWaBtn() {
+    const inp = document.getElementById('wa-input');
+    const icon = document.getElementById('wa-icon');
+    icon.className = inp.value.trim().length > 0 ? "fa-solid fa-paper-plane" : "fa-solid fa-microphone";
+}
+
+async function waSend() {
+    const inp = document.getElementById('wa-input'); const t = inp.value.trim(); if(!t) return;
+    const chat = document.getElementById('wa-chatArea');
+    chat.innerHTML += `<div class="wa-msg wa-sent">${t}<div class="wa-time">${new Date().getHours()}:${new Date().getMinutes()} <i class="fa-solid fa-check-double" id="last-tick"></i></div></div>`;
+    const lastTick = document.getElementById('last-tick'); if(lastTick) lastTick.id = ""; 
+    inp.value = ""; toggleWaBtn();
+    const status = document.getElementById('wa-status');
+    status.innerText = "yazıyor...";
+    
+    aiMemory.fatih.history.push({role:"user", content:t});
+    
+    try {
+        const r = await fetch("https://api.groq.com/openai/v1/chat/completions", { 
+            method:"POST", headers:{Authorization:`Bearer ${GROQ_KEY}`, "Content-Type":"application/json"}, 
+            body:JSON.stringify({ model:"llama-3.1-8b-instant", messages:aiMemory.fatih.history, temperature:0.4 }) 
+        });
+        const d = await r.json(); const reply = d.choices[0].message.content;
+        aiMemory.fatih.history.push({role:"assistant", content:reply});
+        status.innerText = "çevrimiçi";
+        if(lastTick) lastTick.classList.add('blue-tick');
+        chat.innerHTML += `<div class="wa-msg">${reply}<div class="wa-time">${new Date().getHours()}:${new Date().getMinutes()}</div></div>`;
+        chat.scrollTop = chat.scrollHeight;
+    } catch(e) { status.innerText = "çevrimiçi"; }
+}
+
+function toggleDmChatBtn() {
+    const inp = document.getElementById('dm-chat-input');
+    const btn = document.getElementById('dm-chat-send-btn-el');
+    btn.style.display = inp.value.trim().length > 0 ? "block" : "none";
+}
+
+function openDMChat(name, img, charKey) {
+    currentDmChar = charKey;
+    const view = document.getElementById('dm-chat-view');
+    document.getElementById('chat-user-name').innerText = name;
+    document.getElementById('chat-user-img').src = img;
+    const msgArea = document.getElementById('chat-messages');
+    msgArea.innerHTML = "";
+    aiMemory[charKey].history.forEach(m => {
+        if(m.role !== "system") {
+            const cls = m.role === "user" ? "chat-sent" : "chat-received";
+            msgArea.innerHTML += `<div class="chat-bubble ${cls}">${m.content}</div>`;
+        }
+    });
+    view.style.display = 'flex';
+    msgArea.scrollTop = msgArea.scrollHeight;
+}
+
+async function dmChatSend() {
+    const inp = document.getElementById('dm-chat-input'); const t = inp.value.trim(); if(!t) return;
+    const msgArea = document.getElementById('chat-messages');
+    const status = document.getElementById('chat-sub-status');
+    msgArea.innerHTML += `<div class="chat-bubble chat-sent">${t}</div>`;
+    inp.value = ""; toggleDmChatBtn();
+    msgArea.scrollTop = msgArea.scrollHeight;
+    status.innerText = "Typing...";
+    aiMemory[currentDmChar].history.push({role:"user", content:t});
+    try {
+        const r = await fetch("https://api.groq.com/openai/v1/chat/completions", { 
+            method:"POST", headers:{Authorization:`Bearer ${GROQ_KEY}`, "Content-Type":"application/json"}, 
+            body:JSON.stringify({ model:"llama-3.1-8b-instant", messages:aiMemory[currentDmChar].history, temperature:0.5 }) 
+        });
+        const d = await r.json(); const reply = d.choices[0].message.content;
+        aiMemory[currentDmChar].history.push({role:"assistant", content:reply});
+        status.innerText = "Active now";
+        msgArea.innerHTML += `<div class="chat-bubble chat-received">${reply}</div>`;
+        msgArea.scrollTop = msgArea.scrollHeight;
+    } catch(e) { status.innerText = "Active now"; }
+}
+
+function openProfilePost(idx) {
+    const view = document.getElementById('profile-post-view');
+    const content = document.getElementById('profile-post-content');
+    content.innerHTML = sultanDataArr.map((p, i) => `
+        <div class="ig-post" id="post-target-${i}">
+            <div class="p-header"><img src="fatih_profil.jpg"><b>fatih_sultan_mehmet</b></div>
+            <div class="p-img"><img src="${p.img}"></div>
+            <div class="p-actions"><i class="fa-regular fa-heart"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+            <div class="p-caption"><b>fatih_sultan_mehmet</b> ${p.cap}</div>
+        </div>
+    `).join('');
+    view.style.display = "flex";
+    setTimeout(() => {
+        const el = document.getElementById(`post-target-${idx}`);
+        if(el) el.scrollIntoView();
+    }, 10);
+}
+
+function handleReelsScroll() {
+    const container = document.getElementById('ig-reels-scroll');
+    if (!container || container.style.display === 'none') return;
+    const vids = container.querySelectorAll('video');
+    const containerHeight = container.clientHeight;
+    vids.forEach(v => {
+        const rect = v.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        if(Math.abs(center - containerHeight / 2) < containerHeight / 2) {
+            v.muted = false; v.play().catch(e => {});
+        } else { v.pause(); v.muted = true; }
+    });
+}
+
+function switchIG(p) { // FONKSİYON İSMİ DÜZELTİLDİ: ARTIK switchIG
+    document.getElementById('ig-feed-scroll').style.display = p==='feed'?'block':'none';
+    document.getElementById('ig-reels-scroll').style.display = p==='reels'?'block':'none';
+    document.getElementById('ig-profile-scroll').style.display = p==='profile'?'block':'none';
+    document.getElementById('ig-feed-nav').style.display = p==='feed'?'flex':'none';
+    toggleDM(false);
+    document.getElementById('dm-chat-view').style.display = 'none';
+    if(p !== 'reels') {
+        document.querySelectorAll('video').forEach(v => { if(v.id !== 'intro-video') { v.pause(); v.muted = true; } });
+    } else { setTimeout(handleReelsScroll, 100); }
+}
+
+function toggleDM(show) { document.getElementById('ig-dm-page').style.display = show ? 'flex' : 'none'; }
+function toggleApp(id, show) { document.getElementById(id).classList.toggle('active', show); }
+
+// GELİŞMİŞ HİKAYE FONKSİYONLARI (INSTAGRAM GİBİ)
+function openStory(userKey) {
+    currentStoryUser = userKey;
+    currentStoryIndex = 0;
+    renderStoryUI();
+    document.getElementById('story-overlay').style.display = 'flex';
+    startStoryProgress();
+}
+
+function renderStoryUI() {
+    const data = storiesDB[currentStoryUser];
+    document.getElementById('story-user-img').src = data.avatar;
+    document.getElementById('story-user-name').innerText = data.user;
+    document.getElementById('story-img-full').src = data.items[currentStoryIndex];
+    
+    // Çubukları oluştur
+    const barsContainer = document.getElementById('story-bars-wrap');
+    barsContainer.innerHTML = '';
+    data.items.forEach((_, idx) => {
+        const barWrap = document.createElement('div');
+        barWrap.className = 'story-seg-bar';
+        const fill = document.createElement('div');
+        fill.className = 'story-seg-fill';
+        fill.id = `story-fill-${idx}`;
+        
+        // Dolmuş çubuklar
+        if (idx < currentStoryIndex) fill.style.width = '100%';
+        else fill.style.width = '0%';
+        
+        barWrap.appendChild(fill);
+        barsContainer.appendChild(barWrap);
+    });
+}
+
+function startStoryProgress() {
+    clearInterval(storyInterval);
+    storyProgress = 0;
+    const currentBar = document.getElementById(`story-fill-${currentStoryIndex}`);
+    if(!currentBar) return;
+    
+    storyInterval = setInterval(() => {
+        storyProgress += 2; // Hız ayarı
+        currentBar.style.width = storyProgress + '%';
+        if (storyProgress >= 100) {
+            nextStory();
+        }
+    }, 50);
+}
+
+function nextStory() {
+    const data = storiesDB[currentStoryUser];
+    if (currentStoryIndex < data.items.length - 1) {
+        // Şu anki çubuğu tam doldur
+        document.getElementById(`story-fill-${currentStoryIndex}`).style.width = '100%';
+        currentStoryIndex++;
+        renderStoryUI();
+        startStoryProgress();
+    } else {
+        // KULLANICI DEĞİŞTİRME MANTIĞI
+        const userIdx = storyOrder.indexOf(currentStoryUser);
+        if (userIdx < storyOrder.length - 1) {
+            const nextUser = storyOrder[userIdx + 1];
+            openStory(nextUser); // Sonraki kullanıcıya geç
+        } else {
+            closeStory(); // Kimse kalmadıysa kapat
+        }
+    }
+}
+
+function prevStory() {
+    if (currentStoryIndex > 0) {
+        // Önceki çubuğu sıfırla
+        document.getElementById(`story-fill-${currentStoryIndex}`).style.width = '0%';
+        currentStoryIndex--;
+        // Geri gelinen çubuğu da sıfırla ki dolsun
+        document.getElementById(`story-fill-${currentStoryIndex}`).style.width = '0%';
+        renderStoryUI();
+        startStoryProgress();
+    } else {
+        // ÖNCEKİ KULLANICIYA GEÇİŞ
+        const userIdx = storyOrder.indexOf(currentStoryUser);
+        if (userIdx > 0) {
+            const prevUser = storyOrder[userIdx - 1];
+            currentStoryUser = prevUser;
+            currentStoryIndex = storiesDB[prevUser].items.length - 1; // Son hikayesine git
+            renderStoryUI();
+            startStoryProgress();
+        } else {
+            // En baştaysak sadece süreyi sıfırla
+            storyProgress = 0;
+            document.getElementById(`story-fill-0`).style.width = '0%';
+            startStoryProgress();
+        }
+    }
+}
+
+function closeStory() {
+    clearInterval(storyInterval);
+    document.getElementById('story-overlay').style.display = 'none';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const v = document.getElementById('intro-video');
+    if (v) v.play().catch(e => {});
+});
+</script>
+</body>
+</html>
