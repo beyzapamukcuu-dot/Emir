@@ -184,6 +184,132 @@
             <div style="font-size: 20px; font-weight: 700;">Senin için <i class="fa-solid fa-chevron-down" style="font-size:12px;"></i></div>
             <div style="display:flex; gap:22px;">
                 <i class="fa-regular fa-heart"></i>
+                <i class="fa-brands fa-facebook-messenger" onclick="toggleDM(true)"></i>
+            </div>
+        </div>
+
+        <div class="ig-main-content">
+            <div id="ig-feed-scroll">
+                <div class="ig-stories" id="story-bar">
+                    <div class="ig-story-item" onclick="openStory('fatih')"><div class="ring-colorful"><img src="fatih_profil.jpg"></div><span>Fatih</span></div>
+                    <div class="ig-story-item" onclick="openStory('ulubatli')"><div class="ring-colorful"><img src="ulubatli_profil.jpg"></div><span>Ulubatlı</span></div>
+                    <div class="ig-story-item" onclick="openStory('aksemseddin')"><div class="ring-colorful"><img src="aksemseddin_profil.jpg"></div><span>Akşem.</span></div>
+                    <div class="ig-story-item" onclick="openStory('gurani')"><div class="ring-colorful"><img src="gurani_profil.jpg"></div><span>Gürani</span></div>
+                    <div class="ig-story-item" onclick="openStory('zaganos')"><div class="ring-colorful"><img src="zaganos_profil.jpg"></div><span>Zağanos</span></div>
+                </div>
+                
+                <div id="post-container">
+                    <div class="ig-post">
+                        <div class="p-header"><img src="fatih_profil.jpg"><b>fatih_sultan_mehmet</b></div>
+                        <div class="p-img"><img src="post1.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>fatih_sultan_mehmet</b> Fetih öncesi nizamı kontrol ediyoruz. Dualarınız bizimle olsun! #İstanbulFethi #NizamıAlem #Fatih</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="ulubatli_profil.jpg"><b>ulubatli_hasan</b></div>
+                        <div class="p-img"><img src="post2.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>ulubatli_hasan</b> Bu sancak yere düşmez! Surların tepesinde, fethin müjdecisiyiz. 🇹🇷 #Vatan #Bayrak #Fetih2026</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="aksemseddin_profil.jpg"><b>aksemseddin</b></div>
+                        <div class="p-img"><img src="post3.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>aksemseddin</b> Fetihten hemen önce Sultanımızla bir hatıra... Dualar kabul, zafer yakındır. #İnanç #ManeviFetih #Akşemseddin</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="gurani_profil.jpg"><b>molla_gurani</b></div>
+                        <div class="p-img"><img src="post4.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>molla_gurani</b> Hakkın adaleti için surlara yöneldik. Her işaret bir zafere gebe! #İlim #Cihat #Başarı</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="zaganos_profil.jpg"><b>zaganos_pasa</b></div>
+                        <div class="p-img"><img src="post5.jpg"></div>
+                        <div class="p-actions"><i class="fa-regular fa-heart" onclick="this.classList.toggle('fa-solid');this.classList.toggle('active-heart')"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i></div>
+                        <div class="p-caption"><b>zaganos_pasa</b> Son istişareler tamamlandı. Gemiler karadan yürümeye hazır! #Strateji #GemilerKaradan #OsmanlıDonanması</div>
+                    </div>
+                    <div class="ig-post">
+                        <div class="p-header"><img src="fatih_profil.jpg"><b>fatih_sultan_meh        #story-user-img { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #fff; }
+        #story-user-name { flex: 1; font-size: 14px; color: white; text-shadow: 0 1px 2px #000; font-weight: 600; }
+        
+        /* Dokunma Alanları */
+        .story-tap-left { position: absolute; top: 0; left: 0; width: 30%; height: 100%; z-index: 3000; }
+        .story-tap-right { position: absolute; top: 0; right: 0; width: 70%; height: 100%; z-index: 3000; }
+
+        #profile-post-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2500; display: none; flex-direction: column; overflow-y: auto; }
+
+        /* DM PAGE STYLES */
+        #ig-dm-page { display: none; flex-direction: column; background: #000; height: 100%; width: 100%; position: absolute; top: 0; left: 0; z-index: 200; }
+        .dm-header { height: 55px; display: flex; align-items: center; padding: 0 15px; gap: 20px; border-bottom: 0.1px solid #262626; }
+        .dm-header b { flex: 1; font-size: 18px; }
+        .dm-search { background: #121212; margin: 15px; padding: 8px 15px; border-radius: 10px; display: flex; align-items: center; gap: 10px; color: #8e8e8e; }
+        .dm-search input { background: transparent; border: none; outline: none; color: white; flex: 1; }
+        .dm-list { flex: 1; overflow-y: auto; }
+        .dm-item { display: flex; align-items: center; padding: 12px 15px; gap: 12px; cursor: pointer; transition: background 0.2s; }
+        .dm-item:active { background: #1a1a1a; }
+        .dm-item img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+        .dm-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .dm-user { font-weight: 500; font-size: 15px; }
+        .dm-msg-preview { font-size: 13px; color: #a8a8a8; }
+        .dm-active-dot { width: 12px; height: 12px; background: #00d95f; border: 2px solid black; border-radius: 50%; position: absolute; bottom: 0; right: 0; }
+        .dm-unread-dot { width: 8px; height: 8px; background: #0095f6; border-radius: 50%; }
+
+        /* DM SOHBET EKRANI */
+        #dm-chat-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 300; display: none; flex-direction: column; }
+        .chat-header { height: 60px; display: flex; align-items: center; padding: 0 15px; gap: 15px; border-bottom: 0.1px solid #262626; }
+        .chat-header img { width: 35px; height: 35px; border-radius: 50%; }
+        .chat-content { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-bubble { max-width: 75%; padding: 10px 15px; border-radius: 20px; font-size: 14px; line-height: 1.4; }
+        .chat-received { align-self: flex-start; background: #262626; color: white; }
+        .chat-sent { align-self: flex-end; background: #3797f0; color: white; }
+        .dm-chat-input-area { background: #000; padding: 10px 15px; display: flex; align-items: center; gap: 10px; border-top: 0.1px solid #262626; }
+        .dm-chat-input-wrap { flex: 1; background: #262626; border-radius: 20px; display: flex; align-items: center; padding: 0 15px; }
+        .dm-chat-input-box { flex: 1; border: none; outline: none; padding: 10px 0; font-size: 14px; background: transparent; color: white; }
+        .dm-chat-send-btn { background: transparent; color: #0095f6; border: none; font-weight: 600; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+
+<div id="intro-layer">
+    <video id="intro-video" src="intro.mp4" autoplay playsinline muted onended="closeIntro()"></video>
+</div>
+
+<div id="phone-wrapper">
+    <div id="home-screen">
+        <div class="app-item" onclick="toggleApp('wa-app', true)">
+            <div class="app-icon icon-wa"><i class="fa-brands fa-whatsapp"></i></div>
+            <span class="app-label">WhatsApp</span>
+        </div>
+        <div class="app-item" onclick="toggleApp('ig-app', true)">
+            <div class="app-icon icon-ig"><i class="fa-brands fa-instagram"></i></div>
+            <span class="app-label">Instagram</span>
+        </div>
+    </div>
+
+    <div id="wa-app" class="full-app">
+        <div class="wa-header">
+            <i class="fa-solid fa-arrow-left" onclick="toggleApp('wa-app', false)"></i>
+            <img src="fatih_profil.jpg">
+            <div style="flex:1"><b>Fatih Sultan Mehmet</b><small id="wa-status" style="display:block; color:#cfdfdd; font-size:12px;">çevrimiçi</small></div>
+            <div style="display:flex; gap:20px; font-size:18px; color:white; padding-right:5px;"><i class="fa-solid fa-video"></i><i class="fa-solid fa-phone"></i></div>
+        </div>
+        <div class="wa-chat" id="wa-chatArea">
+            <div class="wa-date-label">BUGÜN</div>
+            <div class="wa-msg">Sualin ne ise beyan eyle yiğidim. <div class="wa-time">14:53</div></div>
+        </div>
+        <div class="wa-input-area">
+            <div class="wa-input-wrap"><input type="text" class="wa-input-box" id="wa-input" placeholder="Mesaj yazın" oninput="toggleWaBtn()"></div>
+            <button class="wa-send-btn" id="wa-send-btn-el" onclick="waSend()"><i class="fa-solid fa-microphone" id="wa-icon"></i></button>
+        </div>
+    </div>
+
+    <div id="ig-app" class="full-app">
+        <div id="ig-feed-nav" class="ig-nav">
+          <i class="fa-solid fa-chevron-left" onclick="toggleApp('ig-app', false)" style="font-size: 20px; margin-right: 15px;"></i>
+            <div style="font-size: 20px; font-weight: 700;">Senin için <i class="fa-solid fa-chevron-down" style="font-size:12px;"></i></div>
+            <div style="display:flex; gap:22px;">
+                <i class="fa-regular fa-heart"></i>
                 <i class="fa-solid fa-magnifying-glass"></i>
             </div>
         </div>
