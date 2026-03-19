@@ -24,7 +24,7 @@
         }
 
         /* AÇILIŞ VİDEOSU (INTRO) */
-        #intro-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; }
+        #intro-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         #intro-layer video { width: 100%; height: 100%; object-fit: cover; }
 
         /* ANA EKRAN */
@@ -158,8 +158,8 @@
 <body>
 
 <div id="phone-wrapper">
-    <div id="intro-layer">
-        <video id="intro-video" src="intro.mp4" autoplay playsinline muted onended="closeIntro()"></video>
+    <div id="intro-layer" onclick="closeIntro()">
+        <video id="intro-video" src="intro.mp4" autoplay playsinline muted preload="auto" onended="closeIntro()"></video>
     </div>
 
     <div id="home-screen">
