@@ -13,14 +13,16 @@
         body, html { height: 100%; width: 100%; overflow: hidden; position: fixed; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #000; color: white; }
         
         /* TELEFON / TABLET / TAHTA ORTAK KAPSAYICISI */
+        /* Dev ekranlarda dikey telefon görünümü için orantılı ölçeklendirme eklendi */
         #phone-wrapper { 
             width: 100%; 
             height: 100%; 
-            max-width: 650px; /* Akıllı tahtada yatayda sünüp iğrenç görünmesini engeller, tablet boyutu verir */
+            max-width: 650px; /* Tablet boyutu sınırı, yatayda sünüp görünümün bozulmasını engeller */
             margin: 0 auto; /* Ekranın tam ortasına hizalar */
             position: relative; 
             background: #000; 
             overflow: hidden; 
+            aspect-ratio: 9 / 16; /* Dikey telefon orantısını zorunlu kılar, dev ekranlarda sünüp bozulmaz */
         }
 
         /* AÇILIŞ VİDEOSU (INTRO) */
@@ -433,7 +435,7 @@
         <div class="story-header">
             <img id="story-user-img" src="">
             <b id="story-user-name"></b>
-            <i class="fa-solid fa-xmark" style="margin-left:auto; cursor:pointer;" onclick="closeStory()"></i>
+            <i class="fa-solid fa-xmark" style="margin-left:auto; cursor:pointer;" onclick="closeStory();"></i>
         </div>
         
         <div class="story-tap-left" onclick="prevStory()"></div>
