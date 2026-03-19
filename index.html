@@ -8,11 +8,23 @@
     <style>
         @import url('https://fonts.cdnfonts.com/css/billabong');
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        /* Arka plan akıllı tahtalarda boşlukları siyah gösterir */
         body, html { height: 100%; width: 100%; overflow: hidden; position: fixed; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #000; color: white; }
-        #phone-wrapper { width: 100%; height: 100%; position: relative; }
+        
+        /* TELEFON / TABLET / TAHTA ORTAK KAPSAYICISI */
+        #phone-wrapper { 
+            width: 100%; 
+            height: 100%; 
+            max-width: 650px; /* Akıllı tahtada yatayda sünüp iğrenç görünmesini engeller, tablet boyutu verir */
+            margin: 0 auto; /* Ekranın tam ortasına hizalar */
+            position: relative; 
+            background: #000; 
+            overflow: hidden; 
+        }
 
         /* AÇILIŞ VİDEOSU (INTRO) */
-        #intro-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; }
+        #intro-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; }
         #intro-layer video { width: 100%; height: 100%; object-fit: cover; }
 
         /* ANA EKRAN */
@@ -98,7 +110,7 @@
         .ig-footer img { width: 26px; height: 26px; border-radius: 50%; border: 1px solid white; cursor: pointer; }
 
         /* HİKAYE (STORY) OVERLAY TASARIMI (GELİŞMİŞ) */
-        #story-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
+        #story-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
         #story-bars-wrap { position: absolute; top: 8px; left: 0; width: 100%; padding: 0 5px; display: flex; gap: 4px; z-index: 3002; }
         .story-seg-bar { flex: 1; height: 2px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
         .story-seg-fill { height: 100%; background: #fff; width: 0%; }
@@ -111,7 +123,7 @@
         .story-tap-left { position: absolute; top: 0; left: 0; width: 30%; height: 100%; z-index: 3000; }
         .story-tap-right { position: absolute; top: 0; right: 0; width: 70%; height: 100%; z-index: 3000; }
 
-        #profile-post-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2500; display: none; flex-direction: column; overflow-y: auto; }
+        #profile-post-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2500; display: none; flex-direction: column; overflow-y: auto; }
 
         /* DM PAGE STYLES */
         #ig-dm-page { display: none; flex-direction: column; background: #000; height: 100%; width: 100%; position: absolute; top: 0; left: 0; z-index: 200; }
@@ -145,11 +157,11 @@
 </head>
 <body>
 
-<div id="intro-layer">
-    <video id="intro-video" src="intro.mp4" autoplay playsinline muted onended="closeIntro()"></video>
-</div>
-
 <div id="phone-wrapper">
+    <div id="intro-layer">
+        <video id="intro-video" src="intro.mp4" autoplay playsinline muted onended="closeIntro()"></video>
+    </div>
+
     <div id="home-screen">
         <div class="app-item" onclick="toggleApp('wa-app', true)">
             <div class="app-icon icon-wa"><i class="fa-brands fa-whatsapp"></i></div>
@@ -406,29 +418,29 @@
             <img src="fatih_profil.jpg" onclick="switchIG('profile')">
         </div>
     </div>
-</div>
 
-<div id="profile-post-view">
-    <div class="ig-nav">
-        <i class="fa-solid fa-arrow-left" onclick="document.getElementById('profile-post-view').style.display='none'"></i>
-        <b>Gönderiler</b>
-        <div></div>
+    <div id="profile-post-view">
+        <div class="ig-nav">
+            <i class="fa-solid fa-arrow-left" onclick="document.getElementById('profile-post-view').style.display='none'"></i>
+            <b>Gönderiler</b>
+            <div></div>
+        </div>
+        <div id="profile-post-content"></div>
     </div>
-    <div id="profile-post-content"></div>
-</div>
 
-<div id="story-overlay">
-    <div id="story-bars-wrap"></div> 
-    <div class="story-header">
-        <img id="story-user-img" src="">
-        <b id="story-user-name"></b>
-        <i class="fa-solid fa-xmark" style="margin-left:auto; cursor:pointer;" onclick="closeStory()"></i>
+    <div id="story-overlay">
+        <div id="story-bars-wrap"></div> 
+        <div class="story-header">
+            <img id="story-user-img" src="">
+            <b id="story-user-name"></b>
+            <i class="fa-solid fa-xmark" style="margin-left:auto; cursor:pointer;" onclick="closeStory()"></i>
+        </div>
+        
+        <div class="story-tap-left" onclick="prevStory()"></div>
+        <div class="story-tap-right" onclick="nextStory()"></div>
+        
+        <img id="story-img-full" src="" style="width: 100%; flex: 1; object-fit: cover;">
     </div>
-    
-    <div class="story-tap-left" onclick="prevStory()"></div>
-    <div class="story-tap-right" onclick="nextStory()"></div>
-    
-    <img id="story-img-full" src="" style="width: 100%; flex: 1; object-fit: cover;">
 </div>
 
 <script>
@@ -437,12 +449,12 @@ const GROQ_KEY = "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";
 // HİKAYE VERİTABANI
 const storiesDB = {
     'fatih': { user: 'fatih_sultan_mehmet', avatar: 'fatih_profil.jpg', items: ['post1.jpg', 'post6.jpg', 'fatih_ekstra1.jpg'] },
-    'ulubatli': { user: 'ulubatli_hasan', avatar: 'ulubatli_profil.jpg', items: ['post2.jpg'] }, // Ulubatlı TEK hikaye
+    'ulubatli': { user: 'ulubatli_hasan', avatar: 'ulubatli_profil.jpg', items: ['post2.jpg'] }, 
     'aksemseddin': { user: 'aksemseddin', avatar: 'aksemseddin_profil.jpg', items: ['post3.jpg'] },
     'gurani': { user: 'molla_gurani', avatar: 'gurani_profil.jpg', items: ['post4.jpg'] },
     'zaganos': { user: 'zaganos_pasa', avatar: 'zaganos_profil.jpg', items: ['post5.jpg'] }
 };
-const storyOrder = Object.keys(storiesDB); // Kullanıcı sırası
+const storyOrder = Object.keys(storiesDB);
 
 let currentStoryUser = null;
 let currentStoryIndex = 0;
@@ -587,7 +599,7 @@ function handleReelsScroll() {
     });
 }
 
-function switchIG(p) { // FONKSİYON İSMİ DÜZELTİLDİ: ARTIK switchIG
+function switchIG(p) {
     document.getElementById('ig-feed-scroll').style.display = p==='feed'?'block':'none';
     document.getElementById('ig-reels-scroll').style.display = p==='reels'?'block':'none';
     document.getElementById('ig-profile-scroll').style.display = p==='profile'?'block':'none';
@@ -602,7 +614,6 @@ function switchIG(p) { // FONKSİYON İSMİ DÜZELTİLDİ: ARTIK switchIG
 function toggleDM(show) { document.getElementById('ig-dm-page').style.display = show ? 'flex' : 'none'; }
 function toggleApp(id, show) { document.getElementById(id).classList.toggle('active', show); }
 
-// GELİŞMİŞ HİKAYE FONKSİYONLARI (INSTAGRAM GİBİ)
 function openStory(userKey) {
     currentStoryUser = userKey;
     currentStoryIndex = 0;
@@ -617,7 +628,6 @@ function renderStoryUI() {
     document.getElementById('story-user-name').innerText = data.user;
     document.getElementById('story-img-full').src = data.items[currentStoryIndex];
     
-    // Çubukları oluştur
     const barsContainer = document.getElementById('story-bars-wrap');
     barsContainer.innerHTML = '';
     data.items.forEach((_, idx) => {
@@ -627,7 +637,6 @@ function renderStoryUI() {
         fill.className = 'story-seg-fill';
         fill.id = `story-fill-${idx}`;
         
-        // Dolmuş çubuklar
         if (idx < currentStoryIndex) fill.style.width = '100%';
         else fill.style.width = '0%';
         
@@ -643,7 +652,7 @@ function startStoryProgress() {
     if(!currentBar) return;
     
     storyInterval = setInterval(() => {
-        storyProgress += 2; // Hız ayarı
+        storyProgress += 2; 
         currentBar.style.width = storyProgress + '%';
         if (storyProgress >= 100) {
             nextStory();
@@ -654,43 +663,37 @@ function startStoryProgress() {
 function nextStory() {
     const data = storiesDB[currentStoryUser];
     if (currentStoryIndex < data.items.length - 1) {
-        // Şu anki çubuğu tam doldur
         document.getElementById(`story-fill-${currentStoryIndex}`).style.width = '100%';
         currentStoryIndex++;
         renderStoryUI();
         startStoryProgress();
     } else {
-        // KULLANICI DEĞİŞTİRME MANTIĞI
         const userIdx = storyOrder.indexOf(currentStoryUser);
         if (userIdx < storyOrder.length - 1) {
             const nextUser = storyOrder[userIdx + 1];
-            openStory(nextUser); // Sonraki kullanıcıya geç
+            openStory(nextUser); 
         } else {
-            closeStory(); // Kimse kalmadıysa kapat
+            closeStory(); 
         }
     }
 }
 
 function prevStory() {
     if (currentStoryIndex > 0) {
-        // Önceki çubuğu sıfırla
         document.getElementById(`story-fill-${currentStoryIndex}`).style.width = '0%';
         currentStoryIndex--;
-        // Geri gelinen çubuğu da sıfırla ki dolsun
         document.getElementById(`story-fill-${currentStoryIndex}`).style.width = '0%';
         renderStoryUI();
         startStoryProgress();
     } else {
-        // ÖNCEKİ KULLANICIYA GEÇİŞ
         const userIdx = storyOrder.indexOf(currentStoryUser);
         if (userIdx > 0) {
             const prevUser = storyOrder[userIdx - 1];
             currentStoryUser = prevUser;
-            currentStoryIndex = storiesDB[prevUser].items.length - 1; // Son hikayesine git
+            currentStoryIndex = storiesDB[prevUser].items.length - 1; 
             renderStoryUI();
             startStoryProgress();
         } else {
-            // En baştaysak sadece süreyi sıfırla
             storyProgress = 0;
             document.getElementById(`story-fill-0`).style.width = '0%';
             startStoryProgress();
